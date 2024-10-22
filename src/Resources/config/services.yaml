@@ -1,0 +1,5 @@
+services:
+    Mikamatto\ReservedValuesBundle\Validator\Constraints\ReservedValuesValidator:
+        arguments:
+            - '@service_container'
+        tags: ['validator.constraint_validator']
