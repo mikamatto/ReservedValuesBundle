@@ -17,8 +17,9 @@ class ReservedValuesValidator extends ConstraintValidator
     
     public function validate($value, Constraint $constraint)
     {
-        // Skip validation for admin users
-        if ($this->security->isGranted('ROLE_ADMIN') || $this->security->isGranted('ROLE_SUPER_ADMIN')) {
+        // Skip validation for users with bypass role
+        $bypassRole = $this->container->getParameter('reserved_values.bypass_role');
+        if ($this->security->isGranted($bypassRole)) {
             return;
         }
 

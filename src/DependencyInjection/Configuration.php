@@ -10,8 +10,15 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('reserved_values');
+        $rootNode = $treeBuilder->getRootNode();
 
-        $treeBuilder->getRootNode()
+        $rootNode
+            ->children()
+                ->scalarNode('bypass_role')
+                    ->defaultValue('ROLE_ADMIN')
+                    ->info('The minimum role required to bypass reserved values validation')
+                ->end()
+            ->end()
             ->useAttributeAsKey('key')
             ->arrayPrototype()
                 ->children()
