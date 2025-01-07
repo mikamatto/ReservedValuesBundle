@@ -27,8 +27,8 @@ class ReservedValuesValidator extends ConstraintValidator
 
         // Fetch the restricted values based on the provided key
         $key = $constraint->key;  // Get the key from the constraint
-        $exact = $this->container->getParameter("reserved_values.$key.exact");
-        $patterns = $this->container->getParameter("reserved_values.$key.patterns");
+        $exact = $this->container->getParameter("reserved_values.keys.$key.exact");
+        $patterns = $this->container->getParameter("reserved_values.keys.$key.patterns");
 
         // Convert value to lowercase for case-insensitive matching
         $valueLower = strtolower($value);

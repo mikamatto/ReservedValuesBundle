@@ -40,42 +40,43 @@ The format of the configuration file is as follows:
 reserved_values:
     # Optional: Configure the roles that can bypass validation
     bypass_roles:
-        - ROLE_ADMIN     # Default if not specified
-        - ROLE_MANAGER
-        - ROLE_SUPERVISOR
+        - ROLE_ADMIN # The default value if not specified
+        - ROLE_SYS_ADMIN
+        - ROLE_DATA_ADMIN
 
-    username:
-        exact:
-          - _error
-          - _wdt
-          - _profiler
-          - account
-          - configuration
-          - contact
-          - posts
-          - dmca
-          - login
-          - logout
-          - page
-          - password
-          - register
-          - scheduler
-          - settings
-          - slugger
-          - sfw
-          - user
+    keys:
+        username:
+            exact:
+                - _error
+                - _wdt
+                - _profiler
+                - account
+                - configuration
+                - contact
+                - posts
+                - dmca
+                - login
+                - logout
+                - page
+                - password
+                - register
+                - scheduler
+                - settings
+                - slugger
+                - sfw
+                - user
 
-        patterns:
-          - '^admin.*'    # Bans 'admin', 'administrator', 'admin123', etc.
-          - '^support.*'  # Bans 'support', 'support1', 'support-team', etc.
+            patterns:
+                - '^admin.*'    # Bans 'admin', 'administrator', 'admin123', etc.
+                - '^support.*'  # Bans 'support', 'support1', 'support-team', etc.
 
-    slug:
-        exact:
-          - example-slug
-          - another-slug
+        slug:
+            exact:
+                - example-slug
+                - another-slug
 
-        patterns:
-          - '^draft-.*'   # Bans 'draft-post', 'draft-article', etc.
+            patterns:
+                - '^draft-.*'   # Bans 'draft-post', 'draft-article', etc.
 ```
 
 #### Configuration Options
@@ -109,6 +110,7 @@ class User
     // Other properties and methods...
 }
 ```
+
 #### Using Attributes (Symfony 6.0+)
 
 If you prefer using PHP attributes instead of annotations, you can do so like this:
@@ -129,3 +131,49 @@ class User
 ```
 
 In the examples above, both methods trigger validation whenever a User instance is validated, ensuring that the specified usernames are restricted according to your configuration.
+
+## Upgrading from 1.x to 2.0
+
+Version 2.0 introduces a new configuration structure and the ability to configure multiple bypass roles. Here's how to upgrade your existing configuration:
+
+### Configuration Changes
+
+#### Before (1.x)
+```yaml
+reserved_values:
+    username:
+        exact:
+            - admin
+            - support
+        patterns:
+            - '^admin.*'
+```
+
+#### After (2.0)
+```yaml
+reserved_values:
+    # Optional: Configure roles that can bypass validation
+    bypass_roles:
+        - ROLE_ADMIN # The default value if not specified
+        - ROLE_SYS_ADMIN
+        - ROLE_DATA_ADMIN
+
+    keys:
+        username:
+            exact:
+                - admin
+                - support
+            patterns:
+                - '^admin.*'
+```
+
+### Breaking Changes
+1. All validation rules must now be placed under the `keys` section
+2. The role-based validation bypass is now configurable through `bypass_roles`
+3. The configuration structure has changed to better separate concerns
+
+### Migration Steps
+1. Add the new `keys` root node to your configuration
+2. Move all your existing validation rules under the `keys` section
+3. If you want to customize which roles can bypass validation, add the `bypass_roles` configuration
+4. If you don't specify `bypass_roles`, it defaults to `['ROLE_ADMIN']`
