@@ -14,9 +14,10 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
-                ->scalarNode('bypass_role')
-                    ->defaultValue('ROLE_ADMIN')
-                    ->info('The minimum role required to bypass reserved values validation')
+                ->arrayNode('bypass_roles')
+                    ->scalarPrototype()->end()
+                    ->defaultValue(['ROLE_ADMIN'])
+                    ->info('The roles that are allowed to bypass reserved values validation')
                 ->end()
             ->end()
             ->useAttributeAsKey('key')

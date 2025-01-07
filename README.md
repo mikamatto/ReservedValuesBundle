@@ -38,8 +38,11 @@ The format of the configuration file is as follows:
 
 ```yaml
 reserved_values:
-    # Optional: Configure the minimum role required to bypass validation
-    bypass_role: ROLE_ADMIN  # Default value if not specified
+    # Optional: Configure the roles that can bypass validation
+    bypass_roles:
+        - ROLE_ADMIN     # Default if not specified
+        - ROLE_MANAGER
+        - ROLE_SUPERVISOR
 
     username:
         exact:
@@ -80,7 +83,7 @@ reserved_values:
 - **key**: This is a custom identifier for the field (e.g., username, slug) to which the restrictions apply.
 - **exact**: This section contains a list of values that are strictly forbidden for the specified key. Users attempting to use any of these values will receive a validation error.
 - **patterns**: This section allows you to specify regular expressions for matching values that should be restricted. Any value that matches one of the defined patterns will also trigger a validation error.
-- **bypass_role**: This is an optional configuration that specifies the minimum role required to bypass the validation. If not specified, the default value is `ROLE_ADMIN`.
+- **bypass_roles**: This is an optional configuration that specifies the roles required to bypass the validation. If not specified, the default value is `ROLE_ADMIN`.
 
 Make sure to define at least one of the options under each key in your configuration file. If both sections are left empty for a key, no values will be restricted for that field.
 
