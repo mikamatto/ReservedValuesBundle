@@ -8,17 +8,21 @@ use Symfony\Component\Validator\Constraint;
 class ReservedValues extends Constraint
 {
     public $message = 'The value "{{ string }}" is reserved and cannot be used.';
-    public string $key; // Key for the restricted values
+    public string $key;
+    public array $bypassRoles;
 
-    public function __construct(string $key, array $options = null)
-    {
+    public function __construct(
+        string $key,
+        string|array $bypassRoles = [],
+        array $options = null
+    ) {
         parent::__construct($options);
-        $this->key = $key; // Set the key
+        $this->key = $key;
+        $this->bypassRoles = is_string($bypassRoles) ? [$bypassRoles] : $bypassRoles;
     }
 
     public function validatedBy(): string
     {
-        return ReservedValuesValidator::class; // Return the validator class
+        return ReservedValuesValidator::class;
     }
 }
-

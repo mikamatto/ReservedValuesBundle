@@ -17,9 +17,16 @@ class ReservedValuesValidator extends ConstraintValidator
     
     public function validate($value, Constraint $constraint)
     {
-        // Skip validation for users with bypass roles
-        $bypassRoles = $this->container->getParameter('reserved_values.bypass_roles');
-        foreach ($bypassRoles as $role) {
+        // Check global bypass roles
+        $globalBypassRoles = $this->container->getParameter('reserved_values.bypass_roles');
+        foreach ($globalBypassRoles as $role) {
+            if ($this->security->isGranted($role)) {
+                return;
+            }
+        }
+
+        // Check field-specific bypass roles
+        foreach ($constraint->bypassRoles as $role) {
             if ($this->security->isGranted($role)) {
                 return;
             }

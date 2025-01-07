@@ -90,7 +90,11 @@ Make sure to define at least one of the options under each key in your configura
 
 ### 4. Applying the Validation to an Entity
 
-To apply the `ReservedValues` validation to your entity (for example, User), you need to include the constraint in your entity class. You can do this either with annotations or attributes. Here’s how to do it with both methods:
+To apply the `ReservedValues` validation to your entity, you can use either annotations or attributes. The constraint accepts:
+- `key`: (required) The key for the validation rules defined in your configuration
+- `bypassRoles`: (optional) Additional roles that can bypass validation for this specific field. Can be a single role as string or an array of roles. Defaults to an empty array, meaning only global bypass roles from configuration will apply.
+
+Here are examples using both methods:
 
 #### Using Annotations
 ```php
@@ -103,17 +107,19 @@ class User
 {
     /**
      * @Assert\NotBlank
-     * @ReservedValues(key="username")
+     * @ReservedValues(key="username")  // Only global bypass roles apply
      */
     private $username;
 
-    // Other properties and methods...
+    /**
+     * @Assert\NotBlank
+     * @ReservedValues(key="username", bypassRoles={"ROLE_USER_ADMIN"})  // Global + field-specific roles
+     */
+    private $anotherField;
 }
 ```
 
 #### Using Attributes (Symfony 6.0+)
-
-If you prefer using PHP attributes instead of annotations, you can do so like this:
 ```php
 namespace App\Entity;
 
@@ -123,14 +129,24 @@ use Symfony\Component\Validator\Constraints as Assert;
 class User
 {
     #[Assert\NotBlank]
-    #[ReservedValues(key: "username")]
-    private string $username;
+    #[ReservedValues('username')]  // Only global bypass roles apply
+    private $username;
 
-    // Other properties and methods...
+    #[Assert\NotBlank]
+    #[ReservedValues('username', ['ROLE_USER_ADMIN', 'ROLE_CUSTOM_ADMIN'])]  // Multiple field-specific roles
+    private $secondField;
+
+    #[Assert\NotBlank]
+    #[ReservedValues('username', 'ROLE_USER_ADMIN')]  // Single field-specific role
+    private $thirdField;
 }
 ```
 
-In the examples above, both methods trigger validation whenever a User instance is validated, ensuring that the specified usernames are restricted according to your configuration.
+The validation will be bypassed if the user has either:
+- Any of the global roles defined in the configuration under `bypass_roles`
+- Any of the field-specific roles defined in the attribute (if specified)
+
+This allows for both global and field-specific role-based validation bypass while maintaining backward compatibility with existing code that only uses the `key` parameter.
 
 ## Upgrading from 1.x to 2.0
 
