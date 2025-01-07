@@ -5,15 +5,23 @@ namespace Mikamatto\ReservedValuesBundle\Validator\Constraints;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 
 class ReservedValuesValidator extends ConstraintValidator
 {
-    public function __construct(private ContainerInterface $container)
-    {
+    public function __construct(
+        private ContainerInterface $container,
+        private Security $security
+    ) {
     }
     
     public function validate($value, Constraint $constraint)
     {
+        // Skip validation for admin users
+        if ($this->security->isGranted('ROLE_ADMIN') || $this->security->isGranted('ROLE_SUPER_ADMIN')) {
+            return;
+        }
+
         // Fetch the restricted values based on the provided key
         $key = $constraint->key;  // Get the key from the constraint
         $exact = $this->container->getParameter("reserved_values.$key.exact");

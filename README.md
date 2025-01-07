@@ -7,6 +7,7 @@
 - Block specific exact usernames (e.g., `admin`, `support`).
 - Block usernames based on patterns (e.g., usernames starting with `admin` or `support`).
 - Support for multiple keys to apply a different set of restrictions to different fields.
+- Automatic validation bypass for users with `ROLE_ADMIN` or `ROLE_SUPER_ADMIN` roles.
 
 ## Installation
 
@@ -121,6 +122,3 @@ class User
 ```
 
 In the examples above, both methods trigger validation whenever a User instance is validated, ensuring that the specified usernames are restricted according to your configuration.
-
-
-
