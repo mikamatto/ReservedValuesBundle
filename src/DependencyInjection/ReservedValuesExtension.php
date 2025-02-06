@@ -19,10 +19,15 @@ class ReservedValuesExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-        // Set the restricted values parameter directly
-        foreach ($config as $key => $values) {
-            $container->setParameter("reserved_values.$key.exact", $values['exact'] ?? []);
-            $container->setParameter("reserved_values.$key.patterns", $values['patterns'] ?? []);
+        // Set bypass roles parameter
+        $container->setParameter('reserved_values.bypass_roles', $config['bypass_roles']);
+
+        // Set the restricted values parameters
+        if (isset($config['keys'])) {
+            foreach ($config['keys'] as $key => $values) {
+                $container->setParameter("reserved_values.keys.$key.exact", $values['exact'] ?? []);
+                $container->setParameter("reserved_values.keys.$key.patterns", $values['patterns'] ?? []);
+            }
         }
     }
 }
